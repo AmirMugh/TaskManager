@@ -43,18 +43,16 @@ export function handleLogin(e) {
 export function initializeAuthStateListener() {
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      // User is signed in
+      // User is signed in, show the content
+      document.body.style.display = 'block';
       console.log('User is signed in:', user);
-      // Update UI or redirect to dashboard
-      window.location.href = 'https://amirmugh.github.io/serv/login.html';
+      
+      // Display user email
+      const userEmailElement = document.getElementById('user-email');
+      userEmailElement.textContent = `User: ${user.email}`;
     } else {
-      // User is signed out
-      console.log('No user is signed in.');
-      // Update UI or redirect to login page
-      // If we're not already on the login page, redirect there
-      if (window.location.pathname !== '/index.html' && window.location.pathname !== '/') {
-        window.location.href = 'https://amirmugh.github.io/serv/index.html';
-      }
+      // No user is signed in, redirect to login page
+      window.location.href = 'index.html';
     }
   });
 }
@@ -68,3 +66,25 @@ export function handleSignOut() {
     console.error('Error signing out:', error);
   });
 }
+
+// Function to load all tasks
+function loadAllTasks() {
+    // This function will fetch all tasks from the backend
+    // and populate the "Current Tasks" table
+    console.log('Fetching all tasks from backend...');
+    // TODO: Implement backend fetch and table population
+}
+
+// Function to load tasks for the current user
+function loadMyTasks() {
+    // This function will fetch tasks assigned to the current user
+    // and populate the "My Tasks" table
+    console.log('Fetching my tasks from backend...');
+    // TODO: Implement backend fetch and table population
+}
+
+// Load tasks when the page loads
+window.onload = function() {
+    loadAllTasks();
+    loadMyTasks();
+};
