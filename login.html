@@ -4,78 +4,173 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Family Task Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2196F3;
+            --background-color: #f4f4f4;
+            --text-color: #333;
+            --card-background: #ffffff;
+        }
+
+        * {
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            box-sizing: border-box;
         }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
         .container {
-            width: 80%;
+            width: 90%;
+            max-width: 1200px;
             margin: auto;
-            overflow: hidden;
             padding: 20px;
         }
+
         header {
-            background: #35424a;
+            background: var(--primary-color);
             color: #ffffff;
-            padding-top: 30px;
-            min-height: 70px;
-            border-bottom: #e8491d 3px solid;
+            padding: 20px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
+
         header h1 {
             text-align: center;
+            font-weight: 300;
+            font-size: 2.5em;
+            animation: fadeIn 1s ease-out;
         }
+
         section {
-            margin-top: 20px;
-            padding: 20px;
-            background: #ffffff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-top: 30px;
+            padding: 30px;
+            background: var(--card-background);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            animation: slideUp 0.5s ease-out;
         }
+
+        section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
+
         form {
             margin-bottom: 20px;
         }
+
         input[type="text"], select {
             width: 100%;
-            padding: 8px;
-            margin: 5px 0 20px 0;
+            padding: 12px;
+            margin: 8px 0;
             display: inline-block;
-            border: 1px solid #ccc;
+            border: 1px solid #ddd;
             border-radius: 4px;
             box-sizing: border-box;
+            transition: border-color 0.3s ease;
         }
-        input[type="submit"] {
-            background-color: #4CAF50;
+
+        input[type="text"]:focus, select:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+        }
+
+        input[type="submit"], button {
+            background-color: var(--secondary-color);
             color: white;
-            padding: 14px 20px;
+            padding: 12px 20px;
             margin: 8px 0;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
         }
-        input[type="submit"]:hover {
-            background-color: #45a049;
+
+        input[type="submit"]:hover, button:hover {
+            background-color: #1976D2;
+            transform: translateY(-2px);
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 20px;
         }
+
         th, td {
-            padding: 8px;
+            padding: 12px;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
         footer {
-            background-color: #35424a;
+            background-color: var(--primary-color);
             color: #ffffff;
             text-align: center;
             padding: 10px 0;
             position: fixed;
             bottom: 0;
             width: 100%;
+        }
+
+        footer a {
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .task-action {
+            display: flex;
+            gap: 10px;
+        }
+
+        .delete-btn, .update-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+        }
+
+        .update-btn {
+            background-color: var(--secondary-color);
+        }
+
+        .delete-btn:hover, .update-btn:hover {
+            opacity: 0.8;
         }
     </style>
 </head>
@@ -88,10 +183,10 @@
 
     <div class="container">
         <section id="create-task">
-            <h2>Create New Task</h2>
+            <h2><i class="fas fa-plus-circle"></i> Create New Task</h2>
             <form action="https://amirmugh.github.io/serv/admin.html" method="GET">
                 <label for="task-name">Task Name:</label>
-                <input type="text" id="task-name" name="task-name" required>
+                <input type="text" id="task-name" name="task-name" required placeholder="Enter task name">
 
                 <label for="assigned-to">Assign To:</label>
                 <select id="assigned-to" name="assigned-to" required>
@@ -107,7 +202,7 @@
         </section>
 
         <section id="task-list">
-            <h2>Current Tasks</h2>
+            <h2><i class="fas fa-tasks"></i> Current Tasks</h2>
             <table>
                 <thead>
                     <tr>
@@ -117,32 +212,42 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- This section would be populated dynamically with server-side code -->
                     <tr>
                         <td>Do the dishes</td>
                         <td>Child 1</td>
-                        <td><button onclick="deleteTask(1)">Delete</button></td>
+                        <td class="task-action">
+                            <button class="delete-btn" onclick="deleteTask(1)"><i class="fas fa-trash"></i> Delete</button>
+                            <button class="update-btn" onclick="updateTaskStatus(1)"><i class="fas fa-edit"></i> Update</button>
+                        </td>
                     </tr>
                     <tr>
                         <td>Mow the lawn</td>
                         <td>Dad</td>
-                        <td><button onclick="deleteTask(2)">Delete</button></td>
+                        <td class="task-action">
+                            <button class="delete-btn" onclick="deleteTask(2)"><i class="fas fa-trash"></i> Delete</button>
+                            <button class="update-btn" onclick="updateTaskStatus(2)"><i class="fas fa-edit"></i> Update</button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
         </section>
-    </div>
 
-    <script>
-        function deleteTask(taskId) {
-            if (confirm('Are you sure you want to delete this task?')) {
-                // Here you would typically make an AJAX call to your server to delete the task
-                console.log('Deleting task with ID:', taskId);
-                // After successful deletion, you might want to remove the table row
-                // or refresh the task list
-            }
-        }
-    </script>
+        <section id="my-tasks">
+            <h2><i class="fas fa-user-check"></i> My Tasks</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Task Name</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="my-tasks-body">
+                    <!-- This section would be populated dynamically with JavaScript -->
+                </tbody>
+            </table>
+        </section>
+    </div>
 
     <footer>
         <div class="container">
@@ -150,38 +255,21 @@
         </div>
     </footer>
 
-    <!-- Firebase App (the core Firebase SDK) -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
-
-    <!-- Include Firebase Authentication -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"></script>
-
-    <!-- Include Firestore (for database) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"></script>
-
-    <!-- Optionally include Firebase Messaging (for notifications) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging.js"></script>
 
-    <section id="my-tasks">
-        <h2>My Tasks</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Task Name</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="my-tasks-body">
-                <!-- This section would be populated dynamically with JavaScript -->
-            </tbody>
-        </table>
-    </section>
-
     <script>
+        function deleteTask(taskId) {
+            if (confirm('Are you sure you want to delete this task?')) {
+                console.log('Deleting task with ID:', taskId);
+                // Implement deletion logic here
+            }
+        }
+
         function loadMyTasks() {
-            // Here you would typically make an AJAX call to your server to get the user's tasks
-            // For demonstration, we'll use some dummy data
             const myTasks = [
                 { id: 1, name: "Clean my room", status: "Pending" },
                 { id: 2, name: "Do homework", status: "In Progress" },
@@ -189,15 +277,17 @@
             ];
 
             const tableBody = document.getElementById('my-tasks-body');
-            tableBody.innerHTML = ''; // Clear existing rows
+            tableBody.innerHTML = '';
 
             myTasks.forEach(task => {
                 const row = `
                     <tr>
                         <td>${task.name}</td>
                         <td>${task.status}</td>
-                        <td>
-                            <button onclick="updateTaskStatus(${task.id})">Update Status</button>
+                        <td class="task-action">
+                            <button class="update-btn" onclick="updateTaskStatus(${task.id})">
+                                <i class="fas fa-edit"></i> Update Status
+                            </button>
                         </td>
                     </tr>
                 `;
@@ -206,9 +296,8 @@
         }
 
         function updateTaskStatus(taskId) {
-            // Here you would typically make an AJAX call to your server to update the task status
             console.log('Updating status for task with ID:', taskId);
-            // After successful update, you might want to refresh the task list
+            // Implement status update logic here
             loadMyTasks();
         }
 
