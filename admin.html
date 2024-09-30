@@ -68,15 +68,6 @@
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
-        footer {
-            background-color: #35424a;
-            color: #ffffff;
-            text-align: center;
-            padding: 10px 0;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
     </style>
 </head>
 <body>
@@ -89,7 +80,7 @@
     <div class="container">
         <section id="create-task">
             <h2>Create New Task</h2>
-            <form action="https://amirmugh.github.io/serv/admin.html" method="GET">
+            <form action="/admin/create-task" method="POST">
                 <label for="task-name">Task Name:</label>
                 <input type="text" id="task-name" name="task-name" required>
 
@@ -143,25 +134,8 @@
             }
         }
     </script>
-
-    <footer>
-        <div class="container">
-            <p>&copy; 2023 <a href="https://github.com/AmirMugh/serv" target="_blank">@AmirMugh</a></p>
-        </div>
-    </footer>
-
-    <!-- Firebase App (the core Firebase SDK) -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
-
-    <!-- Include Firebase Authentication -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"></script>
-
-    <!-- Include Firestore (for database) -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"></script>
-
-    <!-- Optionally include Firebase Messaging (for notifications) -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging.js"></script>
-
+</body>
+</html>
     <section id="my-tasks">
         <h2>My Tasks</h2>
         <table>
@@ -217,6 +191,3 @@
             loadMyTasks();
         };
     </script>
-
-</body>
-</html>
