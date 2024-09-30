@@ -41,16 +41,56 @@
     </footer>
 
     <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging.js"></script>
-
-    <!-- Our authentication script -->
     <script type="module">
-        import { handleLogin, initializeAuthStateListener } from './js/auth.js';
-        document.getElementById('login-form').addEventListener('submit', handleLogin);
-        initializeAuthStateListener();
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBx4qK5CrTnpExMkeH5E-7bWP0He5WWOGQ",
+            authDomain: "familytaskmanager-c7a5f.firebaseapp.com",
+            projectId: "familytaskmanager-c7a5f",
+            storageBucket: "familytaskmanager-c7a5f.appspot.com",
+            messagingSenderId: "119108959202",
+            appId: "1:119108959202:web:cc3b79cbdd17b5d0bed7bb"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Check authentication state
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in, redirect to login.html
+                window.location.href = 'login.html';
+            } else {
+                // No user is signed in, show the login form
+                document.body.style.display = 'block';
+            }
+        });
+
+        // Handle login form submission
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Signed in 
+                    const user = userCredential.user;
+                    console.log('User logged in:', user);
+                    // Redirect will be handled by onAuthStateChanged
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    console.error('Login error:', errorCode, errorMessage);
+                    alert("Login failed: " + errorMessage);
+                });
+        });
     </script>
 </body>
 </html>
