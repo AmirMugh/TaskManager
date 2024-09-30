@@ -1,6 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -15,6 +16,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 export function handleLogin(e) {
   e.preventDefault();
@@ -88,3 +90,58 @@ window.onload = function() {
     loadAllTasks();
     loadMyTasks();
 };
+
+async function addTask(task) {
+  try {
+    const docRef = await addDoc(collection(db, "tasks"), task);
+    console.log("Document written with ID: ", docRef.id);
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
+}
+
+async function updateTask(id, updatedData) {
+  await updateDoc(doc(db, "tasks", id), updatedData);
+}
+
+async function deleteTask(id) {
+  await deleteDoc(doc(db, "tasks", id));
+}
+
+async function createTask(taskData) {
+  try {
+    const newTask = {
+      name: taskData.name || "",
+      description: taskData.description || "",
+      assignedTo: taskData.assignedTo || null,
+      createdBy: auth.currentUser.uid, // Assuming you're using Firebase Auth
+      status: "pending",
+      urgency: taskData.urgency || "medium",
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+      dueDate: taskData.dueDate || null
+    };
+
+    const docRef = await addDoc(collection(db, "tasks"), newTask);
+    console.log("Task added with ID: ", docRef.id);
+    return docRef.id;
+  } catch (error) {
+    console.error("Error adding task: ", error);
+    throw error;
+  }
+}
+
+// Usage
+createTask({
+  name: "Complete project",
+  description: "Finish the family task manager project",
+  assignedTo: "user@example.com",
+  urgency: "high",
+  dueDate: new Date("2023-12-31")
+})
+  .then(taskId => {
+    console.log("New task created with ID:", taskId);
+  })
+  .catch(error => {
+    console.error("Failed to create task:", error);
+  });
