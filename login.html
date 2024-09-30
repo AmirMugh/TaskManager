@@ -377,7 +377,28 @@
         window.deleteTask = deleteTask;
         window.updateTaskStatus = updateTaskStatus;
         window.logout = logout;
+
+        import { createTask } from './js/auth.js';
+
+        window.testCreateTask = async function() {
+            try {
+                const taskId = await createTask({
+                    name: "Test Task",
+                    description: "This is a test task",
+                    assignedTo: "test@example.com",
+                    urgency: "medium",
+                    dueDate: new Date("2023-12-31")
+                });
+                console.log("Task created with ID:", taskId);
+                alert("Task created successfully!");
+            } catch (error) {
+                console.error("Error creating task:", error);
+                alert("Failed to create task: " + error.message);
+            }
+        }
     </script>
+
+    <button onclick="testCreateTask()">Create Test Task</button>
 
 </body>
 </html>
