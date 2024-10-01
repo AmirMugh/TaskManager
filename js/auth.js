@@ -57,16 +57,6 @@ export function initializeAuthStateListener() {
   });
 }
 
-export function handleSignOut() {
-  signOut(auth).then(() => {
-    // Sign-out successful.
-    console.log('User signed out');
-  }).catch((error) => {
-    // An error happened.
-    console.error('Error signing out:', error);
-  });
-}
-
 // Function to load all tasks
 function loadAllTasks() {
     // This function will fetch all tasks from the backend
@@ -122,4 +112,4 @@ async function deleteTask(id) {
 //   });
 
 // Make sure this line is at the end of your auth.js file
-export { createTaskNew, logout, initializeAuthStateListener, handleSignOut, loadAllTasks, loadMyTasks, addTask, updateTask, deleteTask };
+export { createTaskNew, logout, initializeAuthStateListener, loadAllTasks, loadMyTasks, addTask, updateTask, deleteTask };
