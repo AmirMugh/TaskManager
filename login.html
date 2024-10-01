@@ -281,7 +281,7 @@
 
     <!-- Firebase SDKs -->
     <script type="module">
-        import { createTaskNew, logout } from './js/auth.js';
+        import { createTaskNew, logout, initializeAuthStateListener } from './js/auth.js';
 
         // Make functions available globally
         window.testCreateTask = async function() {
@@ -300,6 +300,9 @@
         }
 
         window.logout = logout;
+
+        // Initialize auth state listener
+        initializeAuthStateListener();
 
         // Add event listener after the DOM is fully loaded
         document.addEventListener('DOMContentLoaded', (event) => {
