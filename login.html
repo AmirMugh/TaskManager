@@ -380,14 +380,13 @@
 
         import { createTask } from './js/auth.js';
 
-        window.testCreateTask = async function() {
+        // Define the function and add it to the window object
+        async function testCreateTask() {
             try {
                 const taskId = await createTask({
                     name: "Test Task",
                     description: "This is a test task",
-                    assignedTo: "test@example.com",
-                    urgency: "medium",
-                    dueDate: new Date("2023-12-31")
+                    createdAt: new Date()
                 });
                 console.log("Task created with ID:", taskId);
                 alert("Task created successfully!");
@@ -396,9 +395,14 @@
                 alert("Failed to create task: " + error.message);
             }
         }
+
+        // Add event listener after the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.getElementById('testTaskButton').addEventListener('click', testCreateTask);
+        });
     </script>
 
-    <button onclick="testCreateTask()">Create Test Task</button>
+    <button id="testTaskButton">Create Test Task</button>
 
 </body>
 </html>
