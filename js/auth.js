@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
 import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
 import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -16,6 +17,58 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const messaging = getMessaging(app);
+
+// Request permission to send notifications
+async function requestNotificationPermission() {
+    try {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+            console.log('Notification permission granted.');
+            const currentToken = await getToken(messaging, { vapidKey: 'YOUR_PUBLIC_VAPID_KEY' });
+            if (currentToken) {
+                console.log('FCM Token:', currentToken);
+                // Save the token to Firestore
+                const user = auth.currentUser;
+                if (user) {
+                    await updateDoc(doc(db, "users", user.uid), { fcmToken: currentToken });
+                }
+            } else {
+                console.log('No registration token available. Request permission to generate one.');
+            }
+        } else {
+            console.log('Unable to get permission to notify.');
+        }
+    } catch (error) {
+        console.error('An error occurred while retrieving token. ', error);
+    }
+}
+
+// Handle incoming messages
+onMessage(messaging, (payload) => {
+    console.log('Message received. ', payload);
+    // Show notification to the user
+    alert(`${payload.notification.title}: ${payload.notification.body}`);
+});
+
+// Call this function when the user signs in
+function initializeAuthStateListener() {
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            document.body.style.display = 'block';
+            console.log('User is signed in:', user);
+            const userEmailElement = document.getElementById('user-email');
+            if (userEmailElement) {
+                userEmailElement.textContent = `User: ${user.email}`;
+            }
+            loadAllTasks();
+            loadMyTasks(user.email);
+            requestNotificationPermission();
+        } else {
+            window.location.href = 'index.html';
+        }
+    });
+}
 
 async function createTaskNew(taskData) {
     console.log("createTask called with:", taskData);
@@ -37,29 +90,6 @@ async function logout() {
     } catch (error) {
         console.error('Error signing out:', error);
     }
-}
-
-function initializeAuthStateListener() {
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            // User is signed in, show the content
-            document.body.style.display = 'block';
-            console.log('User is signed in:', user);
-            
-            // Display user email
-            const userEmailElement = document.getElementById('user-email');
-            if (userEmailElement) {
-                userEmailElement.textContent = `User: ${user.email}`;
-            }
-
-            // Load tasks for the current user
-            loadAllTasks();
-            loadMyTasks(user.email);
-        } else {
-            // No user is signed in, redirect to login page
-            window.location.href = 'index.html';
-        }
-    });
 }
 
 async function loadAllTasks() {
@@ -86,7 +116,7 @@ function populateTasksTable(tableId, tasks) {
             <td>${task.name}</td>
             <td>${task.assignedTo}</td>
             <td class="task-action">
-                <button class="update-btn" onclick="updateTask('${task.id}')">Update</button>
+                <button class="update-btn" onclick="editTask('${task.id}', '${task.name}', '${task.assignedTo}')">Update</button>
                 <button class="delete-btn" onclick="deleteTask('${task.id}')">Delete</button>
             </td>
         `;
@@ -104,11 +134,25 @@ async function addTask(task) {
 }
 
 async function updateTask(id, updatedData) {
-    await updateDoc(doc(db, "tasks", id), updatedData);
+    try {
+        await updateDoc(doc(db, "tasks", id), updatedData);
+        console.log("Document updated with ID: ", id);
+    } catch (e) {
+        console.error("Error updating document: ", e);
+    }
 }
 
 async function deleteTask(id) {
-    await deleteDoc(doc(db, "tasks", id));
+    try {
+        await deleteDoc(doc(db, "tasks", id));
+        console.log("Document deleted with ID: ", id);
+        // Reload tasks after deletion
+        loadAllTasks();
+        const userEmail = auth.currentUser.email;
+        loadMyTasks(userEmail);
+    } catch (e) {
+        console.error("Error deleting document: ", e);
+    }
 }
 
 export { 
