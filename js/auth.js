@@ -17,7 +17,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-export async function createTask(taskData) {
+export async function createTaskNew(taskData) {
     console.log("createTask called with:", taskData);
     try {
         const docRef = await addDoc(collection(db, "tasks"), taskData);
@@ -107,7 +107,7 @@ async function deleteTask(id) {
 }
 
 // Usage
-createTask({
+createTaskNew({
   name: "Complete project",
   description: "Finish the family task manager project",
   assignedTo: "user@example.com",
@@ -122,4 +122,4 @@ createTask({
   });
 
 // Make sure this line is at the end of your auth.js file
-export { createTask };
+export { createTaskNew };
