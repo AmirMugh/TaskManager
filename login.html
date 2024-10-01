@@ -215,7 +215,7 @@
             <h1>Family Task Manager - Admin Panel</h1>
             <div class="user-info">
                 <span id="user-email"></span>
-                <button onclick="logout()" class="logout-btn">Logout</button>
+                <button onclick="logout()" class="logout-btn" id="logoutButton">Logout</button>
             </div>
         </div>
     </header>
@@ -281,12 +281,12 @@
 
     <!-- Firebase SDKs -->
     <script type="module">
-        import { createTask, logout } from './js/auth.js';
+        import { createTaskNew, logout } from './js/auth.js';
 
         // Make functions available globally
         window.testCreateTask = async function() {
             try {
-                const taskId = await createTask({
+                const taskId = await createTaskNew({
                     name: "Test Task",
                     description: "This is a test task",
                     createdAt: new Date()
