@@ -1,5 +1,5 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
@@ -108,27 +108,16 @@ async function deleteTask(id) {
   await deleteDoc(doc(db, "tasks", id));
 }
 
-async function createTask(taskData) {
-  try {
-    const newTask = {
-      name: taskData.name || "",
-      description: taskData.description || "",
-      assignedTo: taskData.assignedTo || null,
-      createdBy: auth.currentUser.uid, // Assuming you're using Firebase Auth
-      status: "pending",
-      urgency: taskData.urgency || "medium",
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-      dueDate: taskData.dueDate || null
-    };
-
-    const docRef = await addDoc(collection(db, "tasks"), newTask);
-    console.log("Task added with ID: ", docRef.id);
-    return docRef.id;
-  } catch (error) {
-    console.error("Error adding task: ", error);
-    throw error;
-  }
+export async function createTask(taskData) {
+    console.log("createTask called with:", taskData);
+    try {
+        const docRef = await addDoc(collection(db, "tasks"), taskData);
+        console.log("Document written with ID: ", docRef.id);
+        return docRef.id;
+    } catch (error) {
+        console.error("Error adding document: ", error);
+        throw error;
+    }
 }
 
 // Usage
@@ -145,3 +134,6 @@ createTask({
   .catch(error => {
     console.error("Failed to create task:", error);
   });
+
+// Make sure this line is at the end of your auth.js file
+export { createTask };
