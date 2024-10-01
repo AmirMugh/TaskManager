@@ -29,7 +29,7 @@ async function createTaskNew(taskData) {
     }
 }
 
-export async function logout() {
+async function logout() {
     try {
         await signOut(auth);
         console.log('User signed out');
@@ -39,77 +39,59 @@ export async function logout() {
     }
 }
 
-// Manage user state changes
-export function initializeAuthStateListener() {
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      // User is signed in, show the content
-      document.body.style.display = 'block';
-      console.log('User is signed in:', user);
-      
-      // Display user email
-      const userEmailElement = document.getElementById('user-email');
-      userEmailElement.textContent = `User: ${user.email}`;
-    } else {
-      // No user is signed in, redirect to login page
-      window.location.href = 'index.html';
-    }
-  });
+function initializeAuthStateListener() {
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            // User is signed in, show the content
+            document.body.style.display = 'block';
+            console.log('User is signed in:', user);
+            
+            // Display user email
+            const userEmailElement = document.getElementById('user-email');
+            if (userEmailElement) {
+                userEmailElement.textContent = `User: ${user.email}`;
+            }
+        } else {
+            // No user is signed in, redirect to login page
+            window.location.href = 'index.html';
+        }
+    });
 }
 
-// Function to load all tasks
 function loadAllTasks() {
-    // This function will fetch all tasks from the backend
-    // and populate the "Current Tasks" table
     console.log('Fetching all tasks from backend...');
     // TODO: Implement backend fetch and table population
 }
 
-// Function to load tasks for the current user
 function loadMyTasks() {
-    // This function will fetch tasks assigned to the current user
-    // and populate the "My Tasks" table
     console.log('Fetching my tasks from backend...');
     // TODO: Implement backend fetch and table population
 }
 
-// Load tasks when the page loads
-window.onload = function() {
-    loadAllTasks();
-    loadMyTasks();
-};
-
 async function addTask(task) {
-  try {
-    const docRef = await addDoc(collection(db, "tasks"), task);
-    console.log("Document written with ID: ", docRef.id);
-  } catch (e) {
-    console.error("Error adding document: ", e);
-  }
+    try {
+        const docRef = await addDoc(collection(db, "tasks"), task);
+        console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+        console.error("Error adding document: ", e);
+    }
 }
 
 async function updateTask(id, updatedData) {
-  await updateDoc(doc(db, "tasks", id), updatedData);
+    await updateDoc(doc(db, "tasks", id), updatedData);
 }
 
 async function deleteTask(id) {
-  await deleteDoc(doc(db, "tasks", id));
+    await deleteDoc(doc(db, "tasks", id));
 }
 
-// Usage
-// createTaskNew({
-//   name: "Complete project",
-//   description: "Finish the family task manager project",
-//   assignedTo: "user@example.com",
-//   urgency: "high",
-//   dueDate: new Date("2023-12-31")
-// })
-//   .then(taskId => {
-//     console.log("New task created with ID:", taskId);
-//   })
-//   .catch(error => {
-//     console.error("Failed to create task:", error);
-//   });
-
-// Make sure this line is at the end of your auth.js file
-export { createTaskNew, logout, initializeAuthStateListener, loadAllTasks, loadMyTasks, addTask, updateTask, deleteTask };
+export { 
+    createTaskNew, 
+    logout, 
+    initializeAuthStateListener, 
+    loadAllTasks, 
+    loadMyTasks, 
+    addTask, 
+    updateTask, 
+    deleteTask 
+};
