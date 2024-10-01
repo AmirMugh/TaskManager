@@ -1,7 +1,6 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -18,27 +17,26 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-export function handleLogin(e) {
-  e.preventDefault();
+export async function createTask(taskData) {
+    console.log("createTask called with:", taskData);
+    try {
+        const docRef = await addDoc(collection(db, "tasks"), taskData);
+        console.log("Document written with ID: ", docRef.id);
+        return docRef.id;
+    } catch (error) {
+        console.error("Error adding document: ", error);
+        throw error;
+    }
+}
 
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-
-  // Sign in with Firebase Authentication
-  signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      // Signed in successfully
-      const user = userCredential.user;
-      console.log('User logged in:', user);
-      // Redirect is handled by onAuthStateChanged
-    })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.error('Error logging in:', errorCode, errorMessage);
-      // Display error message to the user
-      alert("Login failed: " + errorMessage);
-    });
+export async function logout() {
+    try {
+        await signOut(auth);
+        console.log('User signed out');
+        window.location.href = 'index.html'; // Redirect to login page
+    } catch (error) {
+        console.error('Error signing out:', error);
+    }
 }
 
 // Manage user state changes
@@ -106,18 +104,6 @@ async function updateTask(id, updatedData) {
 
 async function deleteTask(id) {
   await deleteDoc(doc(db, "tasks", id));
-}
-
-export async function createTask(taskData) {
-    console.log("createTask called with:", taskData);
-    try {
-        const docRef = await addDoc(collection(db, "tasks"), taskData);
-        console.log("Document written with ID: ", docRef.id);
-        return docRef.id;
-    } catch (error) {
-        console.error("Error adding document: ", error);
-        throw error;
-    }
 }
 
 // Usage
