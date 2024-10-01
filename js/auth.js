@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
 import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
-import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -10,7 +10,7 @@ const firebaseConfig = {
     storageBucket: "familytaskmanager-c7a5f.appspot.com",
     messagingSenderId: "119108959202",
     appId: "1:119108959202:web:cc3b79cbdd17b5d0bed7bb"
-  };
+};
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -51,6 +51,10 @@ function initializeAuthStateListener() {
             if (userEmailElement) {
                 userEmailElement.textContent = `User: ${user.email}`;
             }
+
+            // Load tasks for the current user
+            loadAllTasks();
+            loadMyTasks(user.email);
         } else {
             // No user is signed in, redirect to login page
             window.location.href = 'index.html';
@@ -58,14 +62,36 @@ function initializeAuthStateListener() {
     });
 }
 
-function loadAllTasks() {
+async function loadAllTasks() {
     console.log('Fetching all tasks from backend...');
-    // TODO: Implement backend fetch and table population
+    const tasksSnapshot = await getDocs(collection(db, "tasks"));
+    const tasks = tasksSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    populateTasksTable('current-tasks-body', tasks);
 }
 
-function loadMyTasks() {
+async function loadMyTasks(userEmail) {
     console.log('Fetching my tasks from backend...');
-    // TODO: Implement backend fetch and table population
+    const q = query(collection(db, "tasks"), where("assignedTo", "==", userEmail));
+    const tasksSnapshot = await getDocs(q);
+    const tasks = tasksSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    populateTasksTable('my-tasks-body', tasks);
+}
+
+function populateTasksTable(tableId, tasks) {
+    const tableBody = document.getElementById(tableId);
+    tableBody.innerHTML = ''; // Clear existing content
+    tasks.forEach(task => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${task.name}</td>
+            <td>${task.assignedTo}</td>
+            <td class="task-action">
+                <button class="update-btn" onclick="updateTask('${task.id}')">Update</button>
+                <button class="delete-btn" onclick="deleteTask('${task.id}')">Delete</button>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
 }
 
 async function addTask(task) {
