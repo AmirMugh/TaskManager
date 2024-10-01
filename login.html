@@ -281,107 +281,10 @@
 
     <!-- Firebase SDKs -->
     <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
-
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBx4qK5CrTnpExMkeH5E-7bWP0He5WWOGQ",
-            authDomain: "familytaskmanager-c7a5f.firebaseapp.com",
-            projectId: "familytaskmanager-c7a5f",
-            storageBucket: "familytaskmanager-c7a5f.appspot.com",
-            messagingSenderId: "119108959202",
-            appId: "1:119108959202:web:cc3b79cbdd17b5d0bed7bb"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // Check authentication state
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // User is signed in, show the content
-                document.body.style.display = 'block';
-                console.log('User is signed in:', user);
-                
-                // Display user email
-                const userEmailElement = document.getElementById('user-email');
-                userEmailElement.textContent = `User: ${user.email}`;
-            } else {
-                // No user is signed in, redirect to login page
-                window.location.replace('index.html');
-            }
-        });
-
-        // Add logout functionality
-        window.logout = function() {
-            signOut(auth).then(() => {
-                // Sign-out successful, redirect will be handled by onAuthStateChanged
-                console.log('User signed out');
-            }).catch((error) => {
-                // An error happened
-                console.error('Error signing out:', error);
-            });
-        }
-
-        // Existing functions
-        function deleteTask(taskId) {
-            if (confirm('Are you sure you want to delete this task?')) {
-                console.log('Deleting task with ID:', taskId);
-                // Implement deletion logic here
-            }
-        }
-
-        function loadMyTasks() {
-            const myTasks = [
-                { id: 1, name: "Clean my room", status: "Pending" },
-                { id: 2, name: "Do homework", status: "In Progress" },
-                { id: 3, name: "Walk the dog", status: "Completed" }
-            ];
-
-            const tableBody = document.getElementById('my-tasks-body');
-            tableBody.innerHTML = '';
-
-            myTasks.forEach(task => {
-                const row = `
-                    <tr>
-                        <td>${task.name}</td>
-                        <td>${task.status}</td>
-                        <td class="task-action">
-                            <button class="update-btn" onclick="updateTaskStatus(${task.id})">
-                                <i class="fas fa-edit"></i> Update Status
-                            </button>
-                        </td>
-                    </tr>
-                `;
-                tableBody.innerHTML += row;
-            });
-        }
-
-        function updateTaskStatus(taskId) {
-            console.log('Updating status for task with ID:', taskId);
-            // Implement status update logic here
-            loadMyTasks();
-        }
-
-        // Load tasks when the page loads
-        window.onload = function() {
-            loadMyTasks();
-        };
+        import { createTask, logout } from './js/auth.js';
 
         // Make functions available globally
-        window.deleteTask = deleteTask;
-        window.updateTaskStatus = updateTaskStatus;
-        window.logout = logout;
-
-        import { createTask } from './js/auth.js';
-
-        // Define the function and add it to the window object
-        async function testCreateTask() {
+        window.testCreateTask = async function() {
             try {
                 const taskId = await createTask({
                     name: "Test Task",
@@ -396,13 +299,18 @@
             }
         }
 
+        window.logout = logout;
+
         // Add event listener after the DOM is fully loaded
         document.addEventListener('DOMContentLoaded', (event) => {
-            document.getElementById('testTaskButton').addEventListener('click', testCreateTask);
+            document.getElementById('testTaskButton').addEventListener('click', window.testCreateTask);
+            document.getElementById('logoutButton').addEventListener('click', window.logout);
         });
     </script>
 
+    <!-- Update your button IDs -->
     <button id="testTaskButton">Create Test Task</button>
+    <button id="logoutButton">Logout</button>
 
 </body>
 </html>
