@@ -225,6 +225,7 @@
                     <option value="ghaith@gmail.com">Ghaith</option>
                     <option value="dad@gmail.com">Dad</option>
                     <option value="mom@gmail.com">Mom</option>
+                    <option value="amxr@gmail.com">Amir</option>
                 </select>
 
                 <input type="submit" value="Create Task">
@@ -272,10 +273,12 @@
 
     <!-- Firebase SDKs -->
     <script type="module">
-        import { createTaskNew, logout, initializeAuthStateListener, loadAllTasks, loadMyTasks } from './js/auth.js';
+        import { createTaskNew, logout, initializeAuthStateListener, loadAllTasks, loadMyTasks, updateTask, deleteTask } from './js/auth.js';
 
         // Make functions available globally
         window.logout = logout;
+        window.updateTask = updateTask;
+        window.deleteTask = deleteTask;
 
         // Initialize auth state listener
         initializeAuthStateListener();
@@ -306,6 +309,26 @@
         document.addEventListener('DOMContentLoaded', (event) => {
             document.getElementById('logoutButton').addEventListener('click', window.logout);
         });
+
+        // Function to handle task editing
+        window.editTask = function(id, name, assignedTo) {
+            const newName = prompt("Enter new task name:", name);
+            const newAssignedTo = prompt("Enter new assigned to:", assignedTo);
+            if (newName && newAssignedTo) {
+                const updatedData = {
+                    name: newName,
+                    assignedTo: newAssignedTo
+                };
+                updateTask(id, updatedData).then(() => {
+                    alert("Task updated successfully!");
+                    loadAllTasks();
+                    loadMyTasks(newAssignedTo);
+                }).catch(error => {
+                    console.error("Error updating task:", error);
+                    alert("Failed to update task: " + error.message);
+                });
+            }
+        };
     </script>
 </body>
 </html>
