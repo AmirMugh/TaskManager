@@ -46,7 +46,7 @@
         }
 
         header h1 {
-            font-weight: 300;
+            font-weight: 700; /* Make the title bold */
             font-size: 2.5em;
             animation: fadeIn 1s ease-out;
         }
@@ -203,27 +203,28 @@
 </head>
 <body>
     <header>
-        <h1>Family Task Manager - Admin Panel</h1>
-        <div class="user-info">
-            <span id="user-email"></span>
-            <button onclick="logout()" class="logout-btn" id="logoutButton">Logout</button>
+        <div class="container">
+            <h1>Family Task Manager - Admin Panel</h1>
+            <div class="user-info">
+                <span id="user-email"></span>
+                <button onclick="logout()" class="logout-btn" id="logoutButton">Logout</button>
+            </div>
         </div>
     </header>
 
     <div class="container">
         <section id="create-task">
             <h2><i class="fas fa-plus-circle"></i> Create New Task</h2>
-            <form action="https://amirmugh.github.io/serv/admin.html" method="GET">
+            <form id="create-task-form">
                 <label for="task-name">Task Name:</label>
                 <input type="text" id="task-name" name="task-name" required placeholder="Enter task name">
 
                 <label for="assigned-to">Assign To:</label>
                 <select id="assigned-to" name="assigned-to" required>
                     <option value="">Select a family member</option>
-                    <option value="mom">Mom</option>
-                    <option value="dad">Dad</option>
-                    <option value="child1">Child 1</option>
-                    <option value="child2">Child 2</option>
+                    <option value="ghaith@gmail.com">Ghaith</option>
+                    <option value="dad@gmail.com">Dad</option>
+                    <option value="mom@gmail.com">Mom</option>
                 </select>
 
                 <input type="submit" value="Create Task">
@@ -271,28 +272,35 @@
 
     <!-- Firebase SDKs -->
     <script type="module">
-        import { createTaskNew, logout, initializeAuthStateListener } from './js/auth.js';
+        import { createTaskNew, logout, initializeAuthStateListener, loadAllTasks, loadMyTasks } from './js/auth.js';
 
         // Make functions available globally
-        window.testCreateTask = async function() {
-            try {
-                const taskId = await createTaskNew({
-                    name: "Test Task",
-                    description: "This is a test task",
-                    createdAt: new Date()
-                });
-                console.log("Task created with ID:", taskId);
-                alert("Task created successfully!");
-            } catch (error) {
-                console.error("Error creating task:", error);
-                alert("Failed to create task: " + error.message);
-            }
-        }
-
         window.logout = logout;
 
         // Initialize auth state listener
         initializeAuthStateListener();
+
+        // Handle task creation
+        document.getElementById('create-task-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const taskName = document.getElementById('task-name').value;
+            const assignedTo = document.getElementById('assigned-to').value;
+            const taskData = {
+                name: taskName,
+                assignedTo: assignedTo,
+                createdAt: new Date()
+            };
+            try {
+                await createTaskNew(taskData);
+                alert("Task created successfully!");
+                // Reload tasks
+                loadAllTasks();
+                loadMyTasks(assignedTo);
+            } catch (error) {
+                console.error("Error creating task:", error);
+                alert("Failed to create task: " + error.message);
+            }
+        });
 
         // Add event listener after the DOM is fully loaded
         document.addEventListener('DOMContentLoaded', (event) => {
