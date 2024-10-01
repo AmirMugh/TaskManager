@@ -40,13 +40,40 @@
             color: #ffffff;
             padding: 20px 0;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         header h1 {
-            text-align: center;
             font-weight: 300;
             font-size: 2.5em;
             animation: fadeIn 1s ease-out;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+
+        #user-email {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: #d32f2f;
         }
 
         section {
@@ -172,51 +199,14 @@
         .delete-btn:hover, .update-btn:hover {
             opacity: 0.8;
         }
-
-        .logout-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background-color: #f44336;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .logout-btn:hover {
-            background-color: #d32f2f;
-        }
-
-        header .container {
-            position: relative;
-        }
-
-        .user-info {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            align-items: center;
-            color: white;
-        }
-
-        #user-email {
-            margin-right: 10px;
-            font-weight: bold;
-        }
     </style>
 </head>
 <body>
     <header>
-        <div class="container">
-            <h1>Family Task Manager - Admin Panel</h1>
-            <div class="user-info">
-                <span id="user-email"></span>
-                <button onclick="logout()" class="logout-btn" id="logoutButton">Logout</button>
-            </div>
+        <h1>Family Task Manager - Admin Panel</h1>
+        <div class="user-info">
+            <span id="user-email"></span>
+            <button onclick="logout()" class="logout-btn" id="logoutButton">Logout</button>
         </div>
     </header>
 
@@ -306,14 +296,8 @@
 
         // Add event listener after the DOM is fully loaded
         document.addEventListener('DOMContentLoaded', (event) => {
-            document.getElementById('testTaskButton').addEventListener('click', window.testCreateTask);
             document.getElementById('logoutButton').addEventListener('click', window.logout);
         });
     </script>
-
-    <!-- Update your button IDs -->
-    <button id="testTaskButton">Create Test Task</button>
-    <button id="logoutButton">Logout</button>
-
 </body>
 </html>
