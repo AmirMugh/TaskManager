@@ -17,7 +17,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-export async function createTaskNew(taskData) {
+async function createTaskNew(taskData) {
     console.log("createTask called with:", taskData);
     try {
         const docRef = await addDoc(collection(db, "tasks"), taskData);
