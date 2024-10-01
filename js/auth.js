@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
-import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -107,19 +107,19 @@ async function deleteTask(id) {
 }
 
 // Usage
-createTaskNew({
-  name: "Complete project",
-  description: "Finish the family task manager project",
-  assignedTo: "user@example.com",
-  urgency: "high",
-  dueDate: new Date("2023-12-31")
-})
-  .then(taskId => {
-    console.log("New task created with ID:", taskId);
-  })
-  .catch(error => {
-    console.error("Failed to create task:", error);
-  });
+// createTaskNew({
+//   name: "Complete project",
+//   description: "Finish the family task manager project",
+//   assignedTo: "user@example.com",
+//   urgency: "high",
+//   dueDate: new Date("2023-12-31")
+// })
+//   .then(taskId => {
+//     console.log("New task created with ID:", taskId);
+//   })
+//   .catch(error => {
+//     console.error("Failed to create task:", error);
+//   });
 
 // Make sure this line is at the end of your auth.js file
-export { createTaskNew };
+export { createTaskNew, logout, initializeAuthStateListener, handleSignOut, loadAllTasks, loadMyTasks, addTask, updateTask, deleteTask };
